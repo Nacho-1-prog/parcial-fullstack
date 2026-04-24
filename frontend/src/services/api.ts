@@ -1,16 +1,13 @@
 import axios from 'axios'
-import type { 
+import type {
   Categoria, CategoriaCreate, CategoriaUpdate,
   Ingrediente, IngredienteCreate, IngredienteUpdate,
   Producto, ProductoCreate, ProductoUpdate
 } from '../types'
 
-// URL del backend
 const api = axios.create({
   baseURL: 'http://localhost:8000'
 })
-
-// SERVICIOS DE CATEGORIA
 
 export const categoriasService = {
   getAll: async (): Promise<Categoria[]> => {
@@ -34,8 +31,6 @@ export const categoriasService = {
   }
 }
 
-// SERVICIOS DE INGREDIENTE
-
 export const ingredientesService = {
   getAll: async (): Promise<Ingrediente[]> => {
     const res = await api.get('/ingredientes/')
@@ -58,8 +53,6 @@ export const ingredientesService = {
   }
 }
 
-// SERVICIOS DE PRODUCTO
-
 export const productosService = {
   getAll: async (): Promise<Producto[]> => {
     const res = await api.get('/productos/')
@@ -79,5 +72,14 @@ export const productosService = {
   },
   delete: async (id: number): Promise<void> => {
     await api.delete(`/productos/${id}`)
+  }
+}
+
+export const productoIngredientesService = {
+  agregar: async (productoId: number, ingredienteId: number, cantidad: number): Promise<void> => {
+    await api.post(`/productos/${productoId}/ingredientes/${ingredienteId}?cantidad=${cantidad}`)
+  },
+  eliminar: async (productoId: number, ingredienteId: number): Promise<void> => {
+    await api.delete(`/productos/${productoId}/ingredientes/${ingredienteId}`)
   }
 }

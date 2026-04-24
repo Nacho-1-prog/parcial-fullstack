@@ -24,7 +24,7 @@ def listar_categorias(
     """
     query = select(Categoria)
     
-    # Si el usuario manda un nombre, filtramos por ese nombre
+    # Si el usuario manda un nombre, filtra por ese nombre
     if nombre:
         query = query.where(Categoria.nombre.contains(nombre))
     

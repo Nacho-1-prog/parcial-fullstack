@@ -1,10 +1,9 @@
-
 // TIPOS DE CATEGORIA
 
 export interface Categoria {
   id: number
   nombre: string
-  descripcion?: string 
+  descripcion?: string
 }
 
 export interface CategoriaCreate {
@@ -37,13 +36,19 @@ export interface IngredienteUpdate {
 
 // TIPOS DE PRODUCTO
 
+export interface ProductoIngrediente {
+  ingrediente_id: number
+  cantidad: number
+}
+
 export interface Producto {
   id: number
   nombre: string
   precio: number
   descripcion?: string
   categoria_id?: number
-  categoria?: Categoria  // Relación con categoría
+  categoria?: Categoria
+  producto_ingredientes?: ProductoIngrediente[]
 }
 
 export interface ProductoCreate {

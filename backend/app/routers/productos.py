@@ -87,6 +87,11 @@ def agregar_ingrediente(
     if not producto:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     
+    # Verificamos si ya existe esa relación
+    existe = session.get(ProductoIngrediente, (producto_id, ingrediente_id))
+    if existe:
+        raise HTTPException(status_code=400, detail="Este ingrediente ya fue agregado al producto")
+    
     relacion = ProductoIngrediente(
         producto_id=producto_id,
         ingrediente_id=ingrediente_id,
@@ -95,3 +100,17 @@ def agregar_ingrediente(
     session.add(relacion)
     session.commit()
     return {"mensaje": "Ingrediente agregado con éxito"}
+
+# DELETE /productos/{id}/ingredientes/{ingrediente_id}
+
+@router.delete("/{producto_id}/ingredientes/{ingrediente_id}", status_code=204)
+def eliminar_ingrediente_de_producto(
+    producto_id: int,
+    ingrediente_id: int,
+    session: SessionDep
+):
+    relacion = session.get(ProductoIngrediente, (producto_id, ingrediente_id))
+    if not relacion:
+        raise HTTPException(status_code=404, detail="Relación no encontrada")
+    session.delete(relacion)
+    session.commit()

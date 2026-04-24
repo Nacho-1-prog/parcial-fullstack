@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
-import { productosService, categoriasService } from '../services/api'
+import { productosService, categoriasService, productoIngredientesService, ingredientesService } from '../services/api'
 import type { Producto, ProductoCreate, ProductoUpdate } from '../types'
 import Modal from '../components/Modal'
+import DetalleProducto from '../components/DetalleProducto'
 
 function ProductosPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -26,6 +27,11 @@ function ProductosPage() {
   const { data: categorias } = useQuery({
     queryKey: ['categorias'],
     queryFn: categoriasService.getAll
+  })
+
+  const { data: ingredientes } = useQuery({
+    queryKey: ['ingredientes'],
+    queryFn: ingredientesService.getAll
   })
 
   const { data: productoDetalle } = useQuery({
@@ -125,29 +131,13 @@ function ProductosPage() {
   // Vista detalle
   if (id && productoDetalle) {
     return (
-      <div>
-        <button
-          onClick={() => navigate('/productos')}
-          style={{color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', marginBottom: '1rem'}}
-        >
-          ← Volver a productos
-        </button>
-
-        <div style={{backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', padding: '2rem'}}>
-          <h2 style={{fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem'}}>
-            {productoDetalle.nombre}
-          </h2>
-          <p style={{color: '#6b7280', marginBottom: '0.5rem'}}>
-            <span style={{fontWeight: '500'}}>Precio:</span> ${productoDetalle.precio}
-          </p>
-          <p style={{color: '#6b7280', marginBottom: '0.5rem'}}>
-            <span style={{fontWeight: '500'}}>Descripción:</span> {productoDetalle.descripcion || '-'}
-          </p>
-          <p style={{color: '#6b7280', marginBottom: '0.5rem'}}>
-            <span style={{fontWeight: '500'}}>Categoría:</span> {productoDetalle.categoria?.nombre || 'Sin categoría'}
-          </p>
-        </div>
-      </div>
+      <DetalleProducto
+        producto={productoDetalle}
+        categorias={categorias || []}
+        ingredientes={ingredientes || []}
+        onVolver={() => navigate('/productos')}
+        onActualizar={() => queryClient.invalidateQueries({ queryKey: ['productos', id] })}
+      />
     )
   }
 
